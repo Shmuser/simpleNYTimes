@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context=".AboutActivity">
+
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ex2_photo" />
+
+    <RelativeLayout
+        android:id="@+id/inner_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/image_view"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:paddingStart="50dp"
+        android:paddingEnd="@dimen/margin"
+        android:layout_marginTop="@dimen/margin">
+
+        <ImageView
+            android:id="@+id/image1"
+            android:src="@drawable/compass"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:layout_toEndOf="@id/image1"
+            android:textSize="@dimen/test_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image1"
+            android:layout_alignTop="@id/image1"
+            android:text="@string/text1"
+            android:gravity="center"
+            android:layout_alignBaseline="@id/image1"/>
+
+        <ImageView
+            android:id="@+id/image2"
+            android:src="@drawable/devices"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/image1"/>
+
+        <TextView
+            android:layout_toEndOf="@id/image2"
+            android:textSize="@dimen/test_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image2"
+            android:layout_alignTop="@id/image2"
+            android:text="@string/text2"
+            android:gravity="center"
+            android:layout_alignBaseline="@id/image2"/>
+
+
+        <ImageView
+            android:id="@+id/image3"
+            android:src="@drawable/cookie"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/image2"/>
+
+        <TextView
+            android:layout_toEndOf="@id/image3"
+            android:textSize="@dimen/test_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image3"
+            android:layout_alignTop="@id/image3"
+            android:text="@string/text3"
+            android:gravity="center"
+            android:layout_alignBaseline="@id/image3"/>
+
+
+        <View
+            android:id="@+id/delim1"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/image3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"/>
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/delim1"
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/test_size"
+            android:text="@string/description"
+            />
+
+        <View
+            android:id="@+id/delim2"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/description"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"/>
+
+        <EditText
+            android:id="@+id/message_text"
+            android:layout_below="@id/delim2"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/message_email_hint"
+            android:inputType="text"
+            android:maxLines="1"/>
+
+        <Button
+            android:id="@+id/send_button"
+            android:text="@string/send_button_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/message_text"
+            android:layout_alignEnd="@id/message_text"
+            android:background="@android:color/transparent"/>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/margin"
+            >
+
+            <ImageView
+                android:id="@+id/iconVk"
+                android:src="@drawable/vk_box"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="4dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <ImageView
+                android:id="@+id/iconInst"
+                android:src="@drawable/instagram"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="4dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <ImageView
+                android:id="@+id/iconSO"
+                android:src="@drawable/stack_overflow"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="4dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+
+

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin">16dp</dimen>
+    <dimen name="test_size">12sp</dimen>
+    <dimen name="cv_text_big">16sp</dimen>
+</resources>

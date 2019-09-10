@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">NYTimes</string>
+    <string name="text1">Om nom nom nom mmm..</string>
+    <string name="text2">Homer Simpson</string>
+    <string name="text3">I like donuts :)</string>
+    <string name="description">Bla bla bla alallalabp lrlr eql el ,vlf ld e lqe le lr l ttttttttt tllllllllllll tllllllllllllwellllll el e ll elelllll</string>
+    <string name="message_email_hint">Enter a message..</string>
+    <string name="send_button_text">send message</string>
+    <string name="about">about</string>
+    <string name="news_image">news image</string>
+</resources>
