@@ -1,20 +1,23 @@
 package ru.vladroid.NYTimes;
 
-import androidx.annotation.NonNull;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewListActivity extends AppCompatActivity {
 
@@ -23,6 +26,10 @@ public class NewListActivity extends AppCompatActivity {
     public final static String categoryKey = "NEWS_LIST_ACTIVITY_CATEGORY";
     public final static String timeKey = "NEWS_LIST_ACTIVITY_TIME";
     public final static String imageUrlKey = "NEWS_LIST_ACTIVITY_IMAGE_URL";
+    private List<NewsItem> data = new ArrayList<>();
+    private RecyclerView recyclerView;
+    ProgressBar progressBar;
+    DataLoadTask loadTask;
 
     private final NewsRecyclerAdapter.OnItemClickListener clickListener = new NewsRecyclerAdapter.OnItemClickListener() {
         @Override
@@ -34,16 +41,45 @@ public class NewListActivity extends AppCompatActivity {
             intent.putExtra(timeKey, NewsRecyclerAdapter.dateToString(news.getPublishDate()));
             intent.putExtra(imageUrlKey, news.getImageUrl());
             startActivity(intent);
-           // Toast.makeText(NewListActivity.this, news.getTitle(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    class DataLoadTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            data.clear();
+            data.addAll(DataUtils.generateNews());
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (recyclerView.getAdapter() != null) {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_list);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setAdapter(new NewsRecyclerAdapter(this, DataUtils.generateNews(), clickListener));
+        recyclerView = findViewById(R.id.recycler_view);
+        progressBar = findViewById(R.id.progress_bar);
+        recyclerView.setAdapter(new NewsRecyclerAdapter(this, data, clickListener));
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             recyclerView.setLayoutManager(new GridLayoutManager(this,2));
@@ -51,8 +87,10 @@ public class NewListActivity extends AppCompatActivity {
         } else {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
-
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        loadTask = new DataLoadTask();
+        loadTask.execute();
+
     }
 
     @Override
@@ -64,12 +102,18 @@ public class NewListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         if (item.getItemId() == R.id.option_about) {
             Intent aboutIntent = new Intent(this, AboutActivity.class);
             startActivity(aboutIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED))
+            loadTask.cancel(true);
     }
 }
