@@ -90,7 +90,6 @@ public class NewListActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         loadTask = new DataLoadTask();
         loadTask.execute();
-
     }
 
     @Override
