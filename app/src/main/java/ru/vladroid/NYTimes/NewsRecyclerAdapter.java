@@ -1,6 +1,7 @@
 package ru.vladroid.NYTimes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,32 +14,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import ru.vladroid.NYTimes.DTO.Result;
+
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.ViewHolder>{
-    private final List<NewsItem> news;
+    private final List<Result> news;
     private final LayoutInflater layoutInflater;
-    private static RequestManager imageLoader;
+    private RequestManager imageLoader;
     private final OnItemClickListener listener;
 
-    public NewsRecyclerAdapter(Context context, List<NewsItem> news, OnItemClickListener listener) {
+    static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+
+    public NewsRecyclerAdapter(Context context, List<Result> news, OnItemClickListener listener) {
         layoutInflater = LayoutInflater.from(context);
         this.news = news;
         imageLoader = Glide.with(context);
         this.listener = listener;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if (news.get(position).getCategory().getId() == 2)
-            return 1;
-        return 0;
-    }
+
 
     @NonNull
     @Override
@@ -63,7 +64,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     }
 
     public interface OnItemClickListener {
-        void onItemClick(NewsItem newsItem);
+        void onItemClick(Result newsItem);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -79,12 +80,22 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             newsTitle = itemView.findViewById(R.id.news_title);
         }
 
-        private void bind(NewsItem newsItem) {
-            newsCat.setText(newsItem.getCategory().getName());
+        private void bind(Result newsItem) {
+
+            newsCat.setText(newsItem.getSubsection().equals("") ? newsItem.getSection() : newsItem.getSubsection());
             newsTitle.setText(newsItem.getTitle());
-            newsText.setText(newsItem.getPreviewText());
-            newsDate.setText(dateToString(newsItem.getPublishDate()));
-            imageLoader.load(newsItem.getImageUrl()).into(newsIcon);
+            newsText.setText(newsItem.getAbstract());
+
+            Date date = null;
+            try {
+                date = df.parse(newsItem.getPublishedDate());
+            } catch (ParseException e) {
+                Log.e("mydaterr", newsItem.getPublishedDate());
+            }
+
+            newsDate.setText(dateToString(date));
+            if (newsItem.getMultimedia().size() != 0 && newsItem.getMultimedia().get(0).getType().equals("image"))
+                imageLoader.load(newsItem.getMultimedia().get(1).getUrl()).into(newsIcon);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -98,6 +109,8 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     }
 
     static String dateToString(Date date) {
+        if (date == null)
+            return "error date parse";
         StringBuilder res = new StringBuilder();
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         cal.setTime(date);
@@ -109,7 +122,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         String fMonth = month >= 10 ? String.valueOf(month) : "0" + String.valueOf(month);
         String fDay = day >= 10 ? String.valueOf(day) : "0" + String.valueOf(day);
         String fHour = hour >= 10 ? String.valueOf(hour) : "0" + String.valueOf(hour);
-        String fMinutes = day >= 10 ? String.valueOf(minutes) : "0" + String.valueOf(minutes);
+        String fMinutes = minutes >= 10 ? String.valueOf(minutes) : "0" + String.valueOf(minutes);
 
 
         Calendar calNow = Calendar.getInstance();
@@ -136,5 +149,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
         return res.toString();
     }
+
+
 
 }
