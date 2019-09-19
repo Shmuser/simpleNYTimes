@@ -10,7 +10,7 @@ import okhttp3.Response;
 public final class ApiKeyInterceptor implements Interceptor {
 
 
-    private static final String TOP_STORIES_API_KEY = "Vyxod54ijCSWcxw2IsusGwHdCDWFNSPL";
+    private static final String TOP_STORIES_API_KEY = "blablabla";
     private static final String API_KEY_HEADER_NAME = "api-key";
 
 
