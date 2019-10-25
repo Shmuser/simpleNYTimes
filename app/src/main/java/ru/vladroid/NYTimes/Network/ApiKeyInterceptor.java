@@ -12,7 +12,7 @@ public final class ApiKeyInterceptor implements Interceptor {
     private static final String TOP_STORIES_API_KEY = "blablabla";
     private static final String API_KEY_HEADER_NAME = "api-key";
 
-    public static ApiKeyInterceptor create() {
+    static ApiKeyInterceptor create() {
         return new ApiKeyInterceptor();
     }
 

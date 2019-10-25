@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Objects;
 
 import ru.vladroid.NYTimes.DTO.Result;
-import ru.vladroid.NYTimes.ui.details.NewsDetailsWebActivity;
 import ru.vladroid.NYTimes.R;
+import ru.vladroid.NYTimes.ui.details.NewsDetailsWebActivity;
 
 public class NewsListActivity extends AppCompatActivity implements Subscribable<List<Result>> {
 
@@ -75,7 +75,7 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadTask = createNewLoadingTask((String)spinner.getSelectedItem());
+                loadTask = createNewLoadingTask((String) spinner.getSelectedItem());
                 runLoading();
             }
 
@@ -134,7 +134,7 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
         recyclerView.setAdapter(new NewsRecyclerAdapter(this, data, clickListener));
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
         } else {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -146,10 +146,10 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)){
+                if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
                     loadTask.cancel(true);
                 }
-                loadTask = createNewLoadingTask((String)spinner.getSelectedItem());
+                loadTask = createNewLoadingTask((String) spinner.getSelectedItem());
                 runLoading();
             }
         });

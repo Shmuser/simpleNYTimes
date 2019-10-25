@@ -1,7 +1,5 @@
 package ru.vladroid.NYTimes.ui.about;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import ru.vladroid.NYTimes.R;
 
@@ -84,11 +84,8 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(Intent.ACTION_VIEW,
                         Uri.parse("https://vk.com")));
                 break;
-
-
             default:
                 break;
-
         }
     }
 }

@@ -1,12 +1,12 @@
 package ru.vladroid.NYTimes.ui.details;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import ru.vladroid.NYTimes.R;
 import ru.vladroid.NYTimes.ui.list.NewsListActivity;

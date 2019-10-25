@@ -23,16 +23,12 @@ abstract class DataLoadTask<T> extends AsyncTask<Object, Void, Boolean> {
             notifyLoadingCompleted();
         }
         else {
-            notifyErrorOccurred();
+            notifyErrorOccurred(null);
         }
     }
 
     void notifyLoadingSucceed(T data) {
         for (int i = 0; i < subscribers.size(); i++) {
-//            subscribers.get(i).onStateChanged(state);
-//        }
-//        for (Subscribable<T> subscriber : subscribers) {
-//            subscriber.onNewsLoad(data);
             subscribers.get(i).onNewsLoad(data);
         }
     }
@@ -45,8 +41,13 @@ abstract class DataLoadTask<T> extends AsyncTask<Object, Void, Boolean> {
         notifyLoadingStateChanged(LoadingState.DataLoaded);
     }
 
-    void notifyErrorOccurred() {
+    void notifyErrorOccurred(Exception e) {
         notifyLoadingStateChanged(LoadingState.NetworkError);
+        if (e != null) {
+            for (int i = 0; i < subscribers.size(); i++) {
+                subscribers.get(i).onLoadingFailed(e);
+            }
+        }
     }
 
     private void notifyLoadingStateChanged(LoadingState state) {

@@ -25,10 +25,10 @@ public class NewsLoadTask extends DataLoadTask<List<Result>> {
     protected Boolean doInBackground(Object... voids) {
         try {
             NewsDTO newsDTO = RestAPI.getInstance().newsEndpoint().get(section).execute().body();
-            Log.e("datat", newsDTO.getStatus());
             notifyLoadingSucceed(newsDTO.getResults());
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();
+            notifyErrorOccurred(e);
             return false;
         }
         return true;
