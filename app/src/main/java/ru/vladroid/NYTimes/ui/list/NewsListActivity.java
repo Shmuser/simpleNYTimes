@@ -23,18 +23,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import ru.vladroid.NYTimes.DTO.NewsDTO;
 import ru.vladroid.NYTimes.DTO.Result;
-import ru.vladroid.NYTimes.Network.RestAPI;
 import ru.vladroid.NYTimes.ui.details.NewsDetailsWebActivity;
 import ru.vladroid.NYTimes.R;
 
-public class NewsListActivity extends AppCompatActivity {
+public class NewsListActivity extends AppCompatActivity implements Subscribable<List<Result>> {
+
+    public final static String TAG = "NewsListActivity";
 
     public final static String NEWS_URL = "NEWS_URL";
     private List<Result> data = new ArrayList<>();
@@ -52,49 +51,6 @@ public class NewsListActivity extends AppCompatActivity {
             startActivity(intent);
         }
     };
-
-    class DataLoadTask extends AsyncTask<Void, Void, Boolean> {
-        String section;
-
-        DataLoadTask(String section) {
-            this.section = section;
-        }
-
-        void setSection(String section) {
-            this.section = section;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                NewsDTO newsDTO = RestAPI.getInstance().newsEndpoint().get(section).execute().body();
-                Log.e("datat", newsDTO.getStatus());
-                data.clear();
-                data.addAll(newsDTO.getResults());
-            } catch (IOException | NullPointerException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            showState(State.Loading);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result && recyclerView.getAdapter() != null) {
-                Log.e("datat", String.valueOf(recyclerView.getAdapter().getItemCount()));
-                showState(State.DataLoaded);
-                recyclerView.getAdapter().notifyDataSetChanged();
-            }
-            else {
-                showState(State.NetworkError);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,21 +75,41 @@ public class NewsListActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadTask = new DataLoadTask((String)spinner.getSelectedItem());
+                loadTask = createNewLoadingTask((String)spinner.getSelectedItem());
                 loadTask.execute();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                // Nothing to do
             }
         });
 
-        loadTask = new DataLoadTask((String)spinner.getSelectedItem());
+        loadTask = createNewLoadingTask((String) spinner.getSelectedItem());
         loadTask.execute();
         return true;
     }
 
+    @Override
+    public void onNewsLoad(final List<Result> news) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                data.addAll(news);
+                Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onLoadingFailed(Exception e) {
+        Log.e(TAG, "Error occurred:", e);
+    }
+
+    @Override
+    public void onStateChanged(LoadingState state) {
+        showState(state);
+    }
 
     @Override
     protected void onStop() {
@@ -173,14 +149,19 @@ public class NewsListActivity extends AppCompatActivity {
                 if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)){ ;
                     loadTask.cancel(true);
                 }
-                loadTask = new DataLoadTask((String)spinner.getSelectedItem());
+                loadTask = createNewLoadingTask((String)spinner.getSelectedItem());
                 loadTask.execute();
             }
         });
     }
 
+    private NewsLoadTask createNewLoadingTask(String section) {
+        NewsLoadTask task = new NewsLoadTask(section);
+        task.subscribe(this);
+        return task;
+    }
 
-    private void showState(@NonNull State state) {
+    private void showState(@NonNull LoadingState state) {
         switch (state) {
             case DataLoaded:
                 progressBar.setVisibility(View.GONE);
@@ -202,13 +183,6 @@ public class NewsListActivity extends AppCompatActivity {
                 break;
         }
 
-    }
-
-
-    private enum State {
-        NetworkError,
-        Loading,
-        DataLoaded
     }
 
     private void setVisible(@Nullable View view, boolean show) {
