@@ -30,7 +30,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     private RequestManager imageLoader;
     private final OnItemClickListener listener;
 
-    static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public NewsRecyclerAdapter(Context context, List<Result> news, OnItemClickListener listener) {
         layoutInflater = LayoutInflater.from(context);
@@ -38,8 +38,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         imageLoader = Glide.with(context);
         this.listener = listener;
     }
-
-
 
     @NonNull
     @Override
@@ -55,7 +53,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(news.get(position));
-
     }
 
     @Override

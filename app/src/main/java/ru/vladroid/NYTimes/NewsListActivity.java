@@ -70,11 +70,10 @@ public class NewsListActivity extends AppCompatActivity {
                 Log.e("datat", newsDTO.getStatus());
                 data.clear();
                 data.addAll(newsDTO.getResults());
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
                 return false;
             }
-
             return true;
         }
 
