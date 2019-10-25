@@ -62,4 +62,7 @@ public class Multimedium {
         this.type = type;
     }
 
+    public boolean isImage() {
+        return type.equals("image");
+    }
 }

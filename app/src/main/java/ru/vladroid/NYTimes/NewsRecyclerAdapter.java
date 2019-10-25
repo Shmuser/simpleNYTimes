@@ -24,11 +24,12 @@ import java.util.TimeZone;
 
 import ru.vladroid.NYTimes.DTO.Result;
 
-public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.ViewHolder>{
+public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.NewsViewHolder> {
     private final List<Result> news;
     private final LayoutInflater layoutInflater;
     private RequestManager imageLoader;
     private final OnItemClickListener listener;
+    private final Context context;
 
     static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -36,23 +37,56 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         layoutInflater = LayoutInflater.from(context);
         this.news = news;
         imageLoader = Glide.with(context);
+        this.context = context;
         this.listener = listener;
+    }
+
+    private enum NewsType {
+        WITHOUT_IMAGE(0),
+        WITH_IMAGE(1);
+
+        private final int id;
+
+        NewsType(int id) {
+            this.id = id;
+        }
+
+        public static NewsType getById(int id) {
+            for (NewsType e : values()) {
+                if (e.id == id) return e;
+            }
+            return WITHOUT_IMAGE;
+        }
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v;
-        if (viewType == 1)
-            v = layoutInflater.inflate(R.layout.news_view2, parent, false);
-        else
-            v = layoutInflater.inflate(R.layout.news_view, parent, false);
-        return new ViewHolder(v);
+        switch (NewsType.getById(viewType)) {
+            case WITH_IMAGE:
+                v = layoutInflater.inflate(R.layout.news_view, parent, false);
+                break;
+            case WITHOUT_IMAGE:
+                v = layoutInflater.inflate(R.layout.news_view2, parent, false);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + NewsType.getById(viewType));
+        }
+        return new NewsViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
         holder.bind(news.get(position));
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (news.get(position).getMultimedia().isEmpty()) {
+            return NewsType.WITHOUT_IMAGE.id;
+        }
+        return NewsType.WITH_IMAGE.id;
     }
 
     @Override
@@ -64,12 +98,16 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         void onItemClick(Result newsItem);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView newsIcon;
-        private final TextView newsCat, newsTitle, newsText, newsDate;
+    class NewsViewHolder extends RecyclerView.ViewHolder {
+        private ImageView newsIcon;
+        private TextView newsCat, newsTitle, newsText, newsDate;
 
-        private ViewHolder(View itemView) {
+        private NewsViewHolder(View itemView) {
             super(itemView);
+            bindViews();
+        }
+
+        private void bindViews() {
             newsIcon = itemView.findViewById(R.id.news_image);
             newsCat = itemView.findViewById(R.id.news_category);
             newsText = itemView.findViewById(R.id.news_text);
@@ -78,21 +116,46 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         }
 
         private void bind(Result newsItem) {
+            setTitle(newsItem);
+            setCategory(newsItem);
+            setText(newsItem);
+            setPublishedDate(newsItem);
 
-            newsCat.setText(newsItem.getSubsection().equals("") ? newsItem.getSection() : newsItem.getSubsection());
+            if (containsImage(newsItem)) {
+                loadImage(newsItem);
+            }
+        }
+
+        private void setTitle(Result newsItem) {
             newsTitle.setText(newsItem.getTitle());
-            newsText.setText(newsItem.getAbstract());
+        }
 
-            Date date = null;
+        private void setCategory(Result newsItem) {
+            newsCat.setText(newsItem.getSubsection().isEmpty() ? newsItem.getSection() : newsItem.getSubsection());
+        }
+
+        private void setText(Result newsItem) {
+            newsText.setText(newsItem.getAbstract());
+        }
+
+        private void setPublishedDate(Result newsItem) {
+            Date date;
             try {
                 date = df.parse(newsItem.getPublishedDate());
+                newsDate.setText(dateToString(date));
             } catch (ParseException e) {
                 Log.e("mydaterr", newsItem.getPublishedDate());
             }
+        }
 
-            newsDate.setText(dateToString(date));
-            if (newsItem.getMultimedia().size() != 0 && newsItem.getMultimedia().get(0).getType().equals("image"))
-                imageLoader.load(newsItem.getMultimedia().get(1).getUrl()).into(newsIcon);
+        private boolean containsImage(Result newsItem) {
+            return !newsItem.getMultimedia().isEmpty()
+                    && newsItem.getMultimedia().get(0).isImage();
+        }
+
+        private void loadImage(Result newsItem) {
+            imageLoader.load(newsItem.getMultimedia().get(1).getUrl())
+                    .into(newsIcon);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -105,7 +168,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         }
     }
 
-    static String dateToString(Date date) {
+    private static String dateToString(Date date) {
         if (date == null)
             return "error date parse";
         StringBuilder res = new StringBuilder();
@@ -116,10 +179,10 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int hour = cal.get(Calendar.HOUR);
         int minutes = cal.get(Calendar.MINUTE);
-        String fMonth = month >= 10 ? String.valueOf(month) : "0" + String.valueOf(month);
-        String fDay = day >= 10 ? String.valueOf(day) : "0" + String.valueOf(day);
-        String fHour = hour >= 10 ? String.valueOf(hour) : "0" + String.valueOf(hour);
-        String fMinutes = minutes >= 10 ? String.valueOf(minutes) : "0" + String.valueOf(minutes);
+        String fMonth = month >= 10 ? String.valueOf(month) : "0" + month;
+        String fDay = day >= 10 ? String.valueOf(day) : "0" + day;
+        String fHour = hour >= 10 ? String.valueOf(hour) : "0" + hour;
+        String fMinutes = minutes >= 10 ? String.valueOf(minutes) : "0" + minutes;
 
 
         Calendar calNow = Calendar.getInstance();
@@ -146,7 +209,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
         return res.toString();
     }
-
 
 
 }
