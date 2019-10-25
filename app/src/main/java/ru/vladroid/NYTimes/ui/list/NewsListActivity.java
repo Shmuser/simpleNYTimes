@@ -34,14 +34,14 @@ import ru.vladroid.NYTimes.R;
 public class NewsListActivity extends AppCompatActivity implements Subscribable<List<Result>> {
 
     public final static String TAG = "NewsListActivity";
-
     public final static String NEWS_URL = "NEWS_URL";
+
     private List<Result> data = new ArrayList<>();
     private RecyclerView recyclerView;
-    ProgressBar progressBar;
-    Button reloadButton;
-    Spinner spinner;
-    DataLoadTask loadTask;
+    private ProgressBar progressBar;
+    private Button reloadButton;
+    private Spinner spinner;
+    private NewsLoadTask loadTask;
 
     private final NewsRecyclerAdapter.OnItemClickListener clickListener = new NewsRecyclerAdapter.OnItemClickListener() {
         @Override
@@ -76,7 +76,7 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 loadTask = createNewLoadingTask((String)spinner.getSelectedItem());
-                loadTask.execute();
+                runLoading();
             }
 
             @Override
@@ -86,7 +86,7 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
         });
 
         loadTask = createNewLoadingTask((String) spinner.getSelectedItem());
-        loadTask.execute();
+        runLoading();
         return true;
     }
 
@@ -146,13 +146,17 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
         reloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)){ ;
+                if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)){
                     loadTask.cancel(true);
                 }
                 loadTask = createNewLoadingTask((String)spinner.getSelectedItem());
-                loadTask.execute();
+                runLoading();
             }
         });
+    }
+
+    private void runLoading() {
+        loadTask.execute();
     }
 
     private NewsLoadTask createNewLoadingTask(String section) {
@@ -175,19 +179,16 @@ public class NewsListActivity extends AppCompatActivity implements Subscribable<
                 recyclerView.setVisibility(View.GONE);
                 break;
 
-
             case NetworkError:
                 progressBar.setVisibility(View.GONE);
                 reloadButton.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
                 break;
         }
-
     }
 
     private void setVisible(@Nullable View view, boolean show) {
         if (view == null) return;
-
         int visibility = show ? View.VISIBLE : View.GONE;
         view.setVisibility(visibility);
     }
