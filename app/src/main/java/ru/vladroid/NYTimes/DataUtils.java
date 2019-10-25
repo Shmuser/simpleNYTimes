@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import ru.vladroid.NYTimes.DTO.Category;
+import ru.vladroid.NYTimes.ui.list.NewsItem;
+
 public class DataUtils {
 
     public static List<NewsItem> generateNews() {

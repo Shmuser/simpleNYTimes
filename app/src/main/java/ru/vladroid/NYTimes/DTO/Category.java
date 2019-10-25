@@ -1,4 +1,4 @@
-package ru.vladroid.NYTimes;
+package ru.vladroid.NYTimes.DTO;
 
 public class Category {
     private final int id;

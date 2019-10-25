@@ -10,8 +10,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class RestAPI {
+
     private static final String URL = "https://api.nytimes.com/svc/";
-    private static final String API_KEY = "Vyxod54ijCSWcxw2IsusGwHdCDWFNSPL";
 
     private static RestAPI mRestAPI;
 

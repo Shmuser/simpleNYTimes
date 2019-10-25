@@ -1,6 +1,8 @@
-package ru.vladroid.NYTimes;
+package ru.vladroid.NYTimes.ui.list;
 
 import java.util.Date;
+
+import ru.vladroid.NYTimes.DTO.Category;
 
 public class NewsItem {
 

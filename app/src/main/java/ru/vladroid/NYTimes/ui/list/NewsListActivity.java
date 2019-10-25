@@ -1,4 +1,4 @@
-package ru.vladroid.NYTimes;
+package ru.vladroid.NYTimes.ui.list;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -31,9 +31,10 @@ import java.util.List;
 import ru.vladroid.NYTimes.DTO.NewsDTO;
 import ru.vladroid.NYTimes.DTO.Result;
 import ru.vladroid.NYTimes.Network.RestAPI;
+import ru.vladroid.NYTimes.ui.details.NewsDetailsWebActivity;
+import ru.vladroid.NYTimes.R;
 
 public class NewsListActivity extends AppCompatActivity {
-
 
     public final static String NEWS_URL = "NEWS_URL";
     private List<Result> data = new ArrayList<>();
@@ -82,7 +83,6 @@ public class NewsListActivity extends AppCompatActivity {
             showState(State.Loading);
         }
 
-
         @Override
         protected void onPostExecute(Boolean result) {
             if (result && recyclerView.getAdapter() != null) {
@@ -100,31 +100,8 @@ public class NewsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_list);
-        recyclerView = findViewById(R.id.recycler_view);
-        progressBar = findViewById(R.id.progress_bar);
-        reloadButton = findViewById(R.id.reload_button);
-        recyclerView.setAdapter(new NewsRecyclerAdapter(this, data, clickListener));
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            recyclerView.setLayoutManager(new GridLayoutManager(this,2));
-            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
-        } else {
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        }
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        reloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)){ ;
-                    loadTask.cancel(true);
-                }
-                loadTask = new DataLoadTask((String)spinner.getSelectedItem());
-                loadTask.execute();
-            }
-        });
+        initViews();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -163,6 +140,43 @@ public class NewsListActivity extends AppCompatActivity {
         super.onStop();
         if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED))
             loadTask.cancel(true);
+    }
+
+    private void initViews() {
+        bindViews();
+        initList();
+        configureReloadButton();
+    }
+
+    private void bindViews() {
+        recyclerView = findViewById(R.id.recycler_view);
+        progressBar = findViewById(R.id.progress_bar);
+        reloadButton = findViewById(R.id.reload_button);
+    }
+
+    private void initList() {
+        recyclerView.setAdapter(new NewsRecyclerAdapter(this, data, clickListener));
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
+        } else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    }
+
+    private void configureReloadButton() {
+        reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!loadTask.getStatus().equals(AsyncTask.Status.FINISHED)){ ;
+                    loadTask.cancel(true);
+                }
+                loadTask = new DataLoadTask((String)spinner.getSelectedItem());
+                loadTask.execute();
+            }
+        });
     }
 
 

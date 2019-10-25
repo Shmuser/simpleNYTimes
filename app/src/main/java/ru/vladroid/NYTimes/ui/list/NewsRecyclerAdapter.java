@@ -1,4 +1,4 @@
-package ru.vladroid.NYTimes;
+package ru.vladroid.NYTimes.ui.list;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import ru.vladroid.NYTimes.DTO.Result;
+import ru.vladroid.NYTimes.R;
 
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.NewsViewHolder> {
     private final List<Result> news;

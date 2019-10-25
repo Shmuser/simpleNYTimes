@@ -1,4 +1,4 @@
-package ru.vladroid.NYTimes;
+package ru.vladroid.NYTimes.ui.about;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import ru.vladroid.NYTimes.R;
 
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
     EditText messageView;
