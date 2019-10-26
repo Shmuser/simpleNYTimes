@@ -1,12 +1,15 @@
-package ru.vladroid.NYTimes;
-
-import androidx.appcompat.app.AppCompatActivity;
+package ru.vladroid.NYTimes.ui.details;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import ru.vladroid.NYTimes.R;
+import ru.vladroid.NYTimes.ui.list.NewsListActivity;
 
 public class NewsDetailsWebActivity extends AppCompatActivity {
     WebView webView;
@@ -34,7 +37,5 @@ public class NewsDetailsWebActivity extends AppCompatActivity {
         webView.setWebViewClient(webViewClient);
         if (intent != null)
             webView.loadUrl(intent.getStringExtra(NewsListActivity.NEWS_URL));
-
-
     }
 }

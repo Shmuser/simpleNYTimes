@@ -1,4 +1,3 @@
-
 package ru.vladroid.NYTimes.DTO;
 
 import com.google.gson.annotations.Expose;
@@ -9,15 +8,19 @@ public class Multimedium {
     @SerializedName("url")
     @Expose
     private String url;
+
     @SerializedName("format")
     @Expose
     private String format;
+
     @SerializedName("height")
     @Expose
     private Integer height;
+
     @SerializedName("width")
     @Expose
     private Integer width;
+
     @SerializedName("type")
     @Expose
     private String type;
@@ -62,4 +65,7 @@ public class Multimedium {
         this.type = type;
     }
 
+    public boolean isImage() {
+        return type.equals("image");
+    }
 }

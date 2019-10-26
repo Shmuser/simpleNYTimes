@@ -1,30 +1,36 @@
-
 package ru.vladroid.NYTimes.DTO;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Result {
 
     @SerializedName("section")
     @Expose
     private String section;
+
     @SerializedName("subsection")
     @Expose
     private String subsection;
+
     @SerializedName("title")
     @Expose
     private String title;
+
     @SerializedName("abstract")
     @Expose
     private String _abstract;
+
     @SerializedName("url")
     @Expose
     private String url;
+
     @SerializedName("published_date")
     @Expose
     private String publishedDate;
+
     @SerializedName("multimedia")
     @Expose
     private List<Multimedium> multimedia = null;

@@ -1,15 +1,16 @@
-
 package ru.vladroid.NYTimes.DTO;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class NewsDTO {
 
     @SerializedName("status")
     @Expose
     private String status;
+
     @SerializedName("results")
     @Expose
     private List<Result> results = null;
